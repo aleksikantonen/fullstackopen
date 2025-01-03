@@ -58,13 +58,16 @@ const App = () => {
     const points = [...votes]
     points[selected] += 1
     setVotes(points)
-    console.log(`Anecdote ${selected} after has now ${points[selected]} votes`)
+    console.log(`Anecdote index ${selected}, votes: ${points[selected]}`)
   }
   
   return (
     <div>
       <Header text='Anecdote of the day' />
-      <Anecdotes text={anecdotes[selected]} votes={votes[selected]} />
+      <Anecdotes 
+        text={anecdotes[selected]}
+        votes={votes[selected]}
+      />
       <Button handleClick={handleVote} text='vote' />
       <Button handleClick={handleNext} text='next anecdote' />
       <Header text='Anecdote with most votes' />
