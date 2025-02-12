@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonsForm from './components/PersonsForm'
@@ -22,7 +21,10 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      alert(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      changeNumber(persons.find(person => person.name === newName).id, newNumber)
+      setNewName('')
+      setNewNumber('')
     } else {
       
       const personObject = {
@@ -36,6 +38,31 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+        })
+    }
+  }
+
+  const changeNumber = (id, newNumber) => {
+    const person = persons.find(p => p.id === id)
+    const changedPerson = { ...person, number: newNumber }
+    personService
+      .update(id, changedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      })
+    }
+
+  const removePerson = id => {
+    const person = persons.find(p => p.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          personService
+            .getAll()
+            .then(updatedPersons => {
+              setPersons(updatedPersons)
+            })
         })
     }
   }
@@ -77,7 +104,10 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} />
+      <Persons
+        personsToShow={personsToShow}
+        removePerson={removePerson}
+      />
     </div>
   )
 
