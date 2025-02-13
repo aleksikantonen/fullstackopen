@@ -3,12 +3,15 @@ import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonsForm from './components/PersonsForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+
 
   useEffect(() => {
     personService
@@ -23,10 +26,7 @@ const App = () => {
     if (persons.find(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook, replace the old number with a new one?`)
       changeNumber(persons.find(person => person.name === newName).id, newNumber)
-      setNewName('')
-      setNewNumber('')
     } else {
-      
       const personObject = {
         name: newName,
         number: newNumber
@@ -36,11 +36,17 @@ const App = () => {
         .create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setSuccessMessage(
+            `Added ${returnedPerson.name}`
+          )
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
           setNewName('')
           setNewNumber('')
         })
+      }
     }
-  }
 
   const changeNumber = (id, newNumber) => {
     const person = persons.find(p => p.id === id)
@@ -49,6 +55,12 @@ const App = () => {
       .update(id, changedPerson)
       .then(returnedPerson => {
         setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        setSuccessMessage(
+          `Changed ${person.name} number to ${newNumber}`
+        )
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
       })
     }
 
@@ -58,10 +70,17 @@ const App = () => {
       personService
         .remove(id)
         .then(() => {
+          setSuccessMessage(
+            `Removed ${person.name}`
+          )
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
           personService
             .getAll()
             .then(updatedPersons => {
               setPersons(updatedPersons)
+              
             })
         })
     }
@@ -89,6 +108,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage}/>
       <Filter 
         value={filterName}
         onChange={handleFilterChange}
