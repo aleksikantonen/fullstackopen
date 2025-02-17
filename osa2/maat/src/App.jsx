@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Filter from './components/Filter'
 import CountryDetails from './components/CountryDetails'
-import CountryList from './components/CountriesList';
+import CountryList from './components/CountriesList'
 
 const App = () => {
-  const [countries, setCountries] = useState([])
+  const [countries, setCountries] = useState(null)
   const [filterCountry, setFilterCountry] = useState('')
   
   useEffect(() => {
