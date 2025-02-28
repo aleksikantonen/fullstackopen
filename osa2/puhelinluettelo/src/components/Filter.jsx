@@ -1,5 +1,4 @@
 const Filter = ({ value, onChange }) => {
-  console.log(value, onChange)
   return (
     <div>
       filter shown with
