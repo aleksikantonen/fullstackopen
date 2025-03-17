@@ -46,6 +46,18 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(error => {
+          if (error.response && error.response.data) {
+            console.log(error.response.data)
+            setErrorMessage(`Error ${error.response.status}: ${error.response.data.error}`)
+          } else {
+            console.log('Error:', error.message)
+            setErrorMessage('An error occurred while adding the person')
+          }
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
       }
     }
 
@@ -64,13 +76,16 @@ const App = () => {
         }, 5000)
       })
       .catch(error => {
-        setErrorMessage(
-          `Information of ${person.name} has already been removed from server`
-        )
+        console.log('Error updating:', error)
+        if (error.response && error.response.data) {
+          setErrorMessage(`Error ${error.response.status}: ${error.response.data.error}`)
+        } else {
+          setErrorMessage(`Information of ${person.name} has already been removed from server`)
+          setPersons(persons.filter(p => p.id !== id))
+        }
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
-        setPersons(persons.filter(p => p.id !== id))
       })
     }
 
@@ -90,8 +105,14 @@ const App = () => {
             .getAll()
             .then(updatedPersons => {
               setPersons(updatedPersons)
-              
             })
+        })
+        .catch(error => {
+          console.log('Error removing:', error.message)
+          setErrorMessage(`Error removing ${person.name}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
   }
