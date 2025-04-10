@@ -1,8 +1,6 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
-const { mostBlogs } = require('../utils/list_helper')
-
-const favoriteBlog = require('../utils/list_helper').mostBlogs
+const mostBlogs = require('../utils/list_helper').mostBlogs
 
 describe('most blogs', () => {
   const allBlogs = [

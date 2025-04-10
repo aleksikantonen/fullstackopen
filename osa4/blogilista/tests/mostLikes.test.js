@@ -1,8 +1,8 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
-const favoriteBlog = require('../utils/list_helper').favoriteBlog
+const mostLikes = require('../utils/list_helper').mostLikes
 
-describe('favorite blog', () => {
+describe('most likes', () => {
   const allBlogs = [
     {
       _id: "5a422a851b54a676234d17f7",
@@ -54,16 +54,12 @@ describe('favorite blog', () => {
     } 
 ]
   
-  test('favorite blog from all blogs', () => {
-    const expectedBlog = {
-      _id: "5a422b3a1b54a676234d17f9",
-      title: "Canonical string reduction",
+  test('author with the most blog likes', () => {
+    const expectedAuthor = {
       author: "Edsger W. Dijkstra",
-      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-      likes: 12,
-      __v: 0
+      likes: 17
     }
 
-    assert.deepStrictEqual(favoriteBlog(allBlogs), expectedBlog)
+    assert.deepStrictEqual(mostLikes(allBlogs), expectedAuthor)
   })
 })

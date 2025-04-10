@@ -1,6 +1,5 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
-
 const totalLikes = require('../utils/list_helper').totalLikes
 
 describe('total likes', () => {
