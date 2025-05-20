@@ -43,6 +43,12 @@ describe('blogs api', () => {
 
     assert.strictEqual(response.body.length, initialBlogs.length)
   })
+
+  test('identifier named as id', async () => {
+    const response = await api.get('/api/blogs')
+
+    assert(response.body[0].id)
+  })
 })
 
 after(async () => {
