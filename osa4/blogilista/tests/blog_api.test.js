@@ -78,7 +78,7 @@ describe('blogs api', () => {
     assert(titles.includes('Canonical string reduction'))
   })
 
-  test.only('blog without likes is added with likes = 0', async () => {
+  test('blog without likes is added with likes = 0', async () => {
     await api
       .post('/api/blogs')
       .send(newBlogs[1])
@@ -90,8 +90,17 @@ describe('blogs api', () => {
     const addedBlog = response.body.find(blog => blog.title === newBlogs[1].title)
     assert.strictEqual(addedBlog.likes, 0)
   })
+
+  test('blog without title or url is not added', async () => {
+    await api
+      .post('/api/blogs')
+      .send({ author: 'Edsger W. Dijkstra' })
+      .expect(400)
+  })
 })
 
 after(async () => {
+  console.log('Closing MongoDB connection...')
   await mongoose.connection.close()
+  console.log('MongoDB connection closed')
 })
