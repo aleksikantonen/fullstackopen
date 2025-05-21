@@ -22,6 +22,20 @@ const initialBlogs = [
   }
 ]
 
+const newBlogs = [
+  {
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12,
+  },
+  {
+    title: "Type wars",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+  },
+]
+
 beforeEach(async () => {
   await Blog.deleteMany({})
   let blogObject = new Blog(initialBlogs[0])
@@ -51,16 +65,9 @@ describe('blogs api', () => {
   })
 
   test('a valid blog can be added', async () => {
-    const newBlog = {
-      title: "Canonical string reduction",
-      author: "Edsger W. Dijkstra",
-      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-      likes: 12,
-    }
-
     await api
       .post('/api/blogs')
-      .send(newBlog)
+      .send(newBlogs[0])
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -69,6 +76,19 @@ describe('blogs api', () => {
 
     const titles = response.body.map(blog => blog.title)
     assert(titles.includes('Canonical string reduction'))
+  })
+
+  test.only('blog without likes is added with likes = 0', async () => {
+    await api
+      .post('/api/blogs')
+      .send(newBlogs[1])
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const addedBlog = response.body.find(blog => blog.title === newBlogs[1].title)
+    assert.strictEqual(addedBlog.likes, 0)
   })
 })
 
