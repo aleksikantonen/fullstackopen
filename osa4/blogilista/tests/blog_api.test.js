@@ -44,7 +44,7 @@ beforeEach(async () => {
   await blogObject.save()
 })
 
-describe('blogs api', () => {
+describe('returning blogs', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -63,7 +63,9 @@ describe('blogs api', () => {
 
     assert(response.body[0].id)
   })
+})
 
+describe('adding blogs', () => {
   test('a valid blog can be added', async () => {
     await api
       .post('/api/blogs')
@@ -97,12 +99,12 @@ describe('blogs api', () => {
       .send({ author: 'Edsger W. Dijkstra' })
       .expect(400)
   })
+})
 
+describe('deleting blogs', () => {
   test('blog is deleted', async () => {
     const blogsAtStart = await api.get('/api/blogs')
     const blogToDelete = blogsAtStart.body[0]
-    
-    console.log('Blog to delete:', blogToDelete)
     
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
@@ -113,6 +115,38 @@ describe('blogs api', () => {
     
     const titles = blogsAtEnd.body.map(blog => blog.title)
     assert(!titles.includes(blogToDelete.title))
+  })
+})
+
+describe('updating blogs', () => {
+  test('update succeeds with 200 if id valid', async () => {
+    const response = await api.get('/api/blogs')
+    const blogToUpdate = response.body[0]
+
+    const updatedBlog = {
+      likes: 100
+    }
+
+    const putResponse = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(putResponse.body.likes, 100)
+  })
+
+  test('update fails with 404 if blog does not exist', async () => {
+    const validNonexistingId = new mongoose.Types.ObjectId().toString()
+
+    const updatedBlog = {
+      likes: 5
+    }
+
+    await api
+      .put(`/api/blogs/${validNonexistingId}`)
+      .send(updatedBlog)
+      .expect(404)
   })
 })
 
