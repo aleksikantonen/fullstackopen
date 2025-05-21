@@ -97,6 +97,23 @@ describe('blogs api', () => {
       .send({ author: 'Edsger W. Dijkstra' })
       .expect(400)
   })
+
+  test('blog is deleted', async () => {
+    const blogsAtStart = await api.get('/api/blogs')
+    const blogToDelete = blogsAtStart.body[0]
+    
+    console.log('Blog to delete:', blogToDelete)
+    
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+    
+    const blogsAtEnd = await api.get('/api/blogs')
+    assert.strictEqual(blogsAtEnd.body.length, blogsAtStart.body.length - 1)
+    
+    const titles = blogsAtEnd.body.map(blog => blog.title)
+    assert(!titles.includes(blogToDelete.title))
+  })
 })
 
 after(async () => {
