@@ -29,11 +29,9 @@ blogsRouter.delete('/:id', async (request, response) => {
   response.status(204).end()
 })
 
-// Tässä on korjattu PUT-reitti
 blogsRouter.put('/:id', async (request, response) => {
   const { likes } = request.body
 
-  // Käytetään findById + save metodia, kuten määritelty
   const blog = await Blog.findById(request.params.id)
   
   if (!blog) {
